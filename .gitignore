@@ -6,3 +6,5 @@ auth-api/src/logs
 __pycache__
 auth-api/include
 auth-api/src/auth.db
+cert.pem
+key.pem
