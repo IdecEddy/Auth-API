@@ -3,4 +3,5 @@ auth-api/lib
 auth-api/src/__pycache__
 auth-api/pyvenv.cfg
 auth-api/src/logs
-
+__pycache__
+auth-api/include
