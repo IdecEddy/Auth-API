@@ -5,3 +5,4 @@ auth-api/pyvenv.cfg
 auth-api/src/logs
 __pycache__
 auth-api/include
+auth-api/src/auth.db
