@@ -13,7 +13,6 @@ router = APIRouter(
     prefix="/api/v1/auth",
 )
 logger = setup_logging()
-
 Base = declarative_base()
 
 
@@ -87,9 +86,9 @@ def create_jwt_token(user_id: int, secret_key: str, expires_delta: int = 60) -> 
     str: Encoded JWT token.
     """
     expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=expires_delta)
-    iss = "ecorp"
-    sub = "ecorp"
-    aud = "device-id"
+    iss = "auth-api"
+    sub = "device-id"
+    aud = "requesting-api"
     payload = {
         "user_id": user_id,
         "iss": iss,
@@ -125,6 +124,7 @@ async def login(user_login: UserLogin):
             )
             if is_password_verified:
                 logger.warning("The user has logged in")
-                return "logged in"
+                token = create_jwt_token(user_id=1, secret_key="Hello")
+                return token
         logger.warning("The user failed to login")
         return "login failed"
