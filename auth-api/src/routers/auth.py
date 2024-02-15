@@ -8,6 +8,8 @@ from pydantic import BaseModel, EmailStr
 import bcrypt
 import jwt
 import datetime
+from dotenv import load_dotenv
+import os
 
 router = APIRouter(
     prefix="/api/v1/auth",
@@ -15,6 +17,17 @@ router = APIRouter(
 logger = setup_logging()
 Base = declarative_base()
 
+load_dotenv()
+
+PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY_PATH")
+PUBLIC_KEY_PATH = os.getenv("PUBLIC_KEY_PATH")
+
+def load_key(path: str) -> str:
+    with open(path, 'r') as file:
+        return file.read()
+
+PRIVATE_KEY = load_key(PRIVATE_KEY_PATH)
+PUBLIC_KEY = load_key(PUBLIC_KEY_PATH)
 
 class User(Base):
     __tablename__ = "users"
@@ -37,6 +50,7 @@ class User(Base):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 
 def hash_password(password: str) -> str:
@@ -97,7 +111,7 @@ def create_jwt_token(user_id: int, secret_key: str, expires_delta: int = 60) -> 
         "exp": expire,
     }
 
-    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    token = jwt.encode(payload, secret_key, algorithm="RS256")
 
     return token
 
@@ -124,7 +138,7 @@ async def login(user_login: UserLogin):
             )
             if is_password_verified:
                 logger.warning("The user has logged in")
-                token = create_jwt_token(user_id=1, secret_key="Hello")
+                token = create_jwt_token(user_id=1, secret_key=PRIVATE_KEY)
                 return token
         logger.warning("The user failed to login")
         return "login failed"
