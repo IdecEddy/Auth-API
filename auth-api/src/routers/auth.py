@@ -6,9 +6,7 @@ from utils.token import create_jwt_token
 from utils.hashing import verify_password
 from utils.db import get_db, User
 
-router = APIRouter(
-    prefix="/api/v1/auth",
-)
+router = APIRouter(prefix="/api/v1/auth")
 logger = setup_logging()
 
 
@@ -24,14 +22,14 @@ def test_auth():
 
 @router.post("/login")
 async def login(user_login: UserLogin, db: Session = Depends(get_db)):
-        user_record = db.query(User).filter(User.email == user_login.email).first()
-        if user_record:
-            is_password_verified = verify_password(
-                user_login.password, str(user_record.hashed_password)
-            )
-            if is_password_verified:
-                logger.warning("The user has logged in")
-                token = create_jwt_token(user_id=1)
-                return token
-        logger.warning("The user failed to login")
-        return "login failed"
+    user_record = db.query(User).filter(User.email == user_login.email).first()
+    if user_record:
+        is_password_verified = verify_password(
+            user_login.password, str(user_record.hashed_password)
+        )
+        if is_password_verified:
+            logger.warning("The user has logged in")
+            token = create_jwt_token(user_id=1)
+            return token
+    logger.warning("The user failed to login")
+    return "login failed"

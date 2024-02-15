@@ -10,6 +10,7 @@ engine = create_engine(rf"sqlite:///{db_path}")
 Base.metadata.create_all(engine)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -26,6 +27,7 @@ class User(Base):
             f" date_created={self.date_created},"
             f" date_updated={self.date_updated})>"
         )
+
 
 def get_db():
     db = SessionLocal()
