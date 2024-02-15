@@ -37,6 +37,6 @@ async def login(
                 secure=True,
                 samesite="lax",
             )
-            return Response(content="User logged it", status_code=200)
+            return Response(content="User logged in", status_code=200)
     logger.warning("The user failed to login")
     return Response(content="User login failed", status_code=401)
