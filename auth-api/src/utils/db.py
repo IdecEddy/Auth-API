@@ -22,6 +22,7 @@ class User(Base):
     date_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self):
+        
         return (
             f"<User(name={self.name}, email={self.email},"
             f" date_created={self.date_created},"
