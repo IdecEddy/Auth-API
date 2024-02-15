@@ -8,3 +8,6 @@ auth-api/include
 auth-api/src/auth.db
 cert.pem
 key.pem
+private.key
+public.key
+.env
