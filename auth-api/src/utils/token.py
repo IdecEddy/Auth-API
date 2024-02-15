@@ -8,9 +8,11 @@ load_dotenv()
 PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY_PATH")
 PUBLIC_KEY_PATH = os.getenv("PUBLIC_KEY_PATH")
 
+
 def load_key(path: str) -> str:
-    with open(path, 'r') as file:
+    with open(path, "r") as file:
         return file.read()
+
 
 if PRIVATE_KEY_PATH:
     PRIVATE_KEY = load_key(PRIVATE_KEY_PATH)
@@ -20,6 +22,7 @@ if PUBLIC_KEY_PATH:
     PUBLIC_KEY = load_key(PUBLIC_KEY_PATH)
 else:
     raise IOError(f"Could not load public key from path {PUBLIC_KEY_PATH}")
+
 
 def create_jwt_token(user_id: int, expires_delta: int = 60) -> str:
     """
