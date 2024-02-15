@@ -5,6 +5,7 @@ from utils.token import create_jwt_token
 from utils.hashing import verify_password
 from utils.db import get_db, User
 from models.user_login import UserLogin
+from models.user import User
 
 router = APIRouter(prefix="/api/v1/auth")
 logger = setup_logging()
