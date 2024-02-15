@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, Response
+from fastapi.responses import JSONResponse
+from starlette.types import Message
 from loggingconf import setup_logging
 from sqlalchemy.orm import Session
 from utils.token import create_jwt_token
@@ -37,6 +39,6 @@ async def login(
                 secure=True,
                 samesite="lax",
             )
-            return Response(content="User logged in", status_code=200)
+            return {"message": "User logged in."}
     logger.warning("The user failed to login")
-    return Response(content="User login failed", status_code=401)
+    return {"message": "User failed to login."} 
