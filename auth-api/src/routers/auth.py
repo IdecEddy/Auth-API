@@ -29,7 +29,7 @@ async def login(
         )
         if is_password_verified:
             logger.info(f"user: {user_login.email} has logged in")
-            token = create_jwt_token(user_id=1)
+            token = create_jwt_token(user_id=1, audience=user_login.audience)
             response.set_cookie(
                 key="auth_token",
                 value=token,
