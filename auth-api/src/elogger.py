@@ -2,6 +2,7 @@ import datetime as dt
 import json
 import logging
 from typing_extensions import override
+
 LOG_RECORD_BUILTIN_ATTRS = {
     "args",
     "asctime",
@@ -57,9 +58,11 @@ class MyJSONFormatter(logging.Formatter):
             always_fields["stack_info"] = self.formatStack(record.stack_info)
 
         message = {
-            key: msg_val
-            if (msg_val := always_fields.pop(val, None)) is not None
-            else getattr(record, val)
+            key: (
+                msg_val
+                if (msg_val := always_fields.pop(val, None)) is not None
+                else getattr(record, val)
+            )
             for key, val in self.fmt_keys.items()
         }
         message.update(always_fields)
@@ -74,4 +77,4 @@ class MyJSONFormatter(logging.Formatter):
 class NonErrorFilter(logging.Filter):
     @override
     def filter(self, record: logging.LogRecord) -> bool | logging.LogRecord:
-        return record.levelno <= logging.INFO 
+        return record.levelno <= logging.INFO
