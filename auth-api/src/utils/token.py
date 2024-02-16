@@ -1,10 +1,12 @@
 import datetime
 import jwt
+from jwt.exceptions import InvalidTokenError
 from dotenv import load_dotenv
 import os
+from loggingconf import setup_logging
 
 load_dotenv()
-
+logger = setup_logging()
 PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY_PATH")
 PUBLIC_KEY_PATH = os.getenv("PUBLIC_KEY_PATH")
 
@@ -51,3 +53,27 @@ def create_jwt_token(user_id: int, expires_delta: int = 60) -> str:
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
 
     return token
+
+
+def verify_jwt_token(token: str, audience: str) -> dict:
+    """
+    Verify an RSA JWT token and return its payload if valid.
+
+    Args:
+        token (str): The JWT token to verify.
+        public_key (str): The RSA public key used for verifying the token.
+
+    Returns:
+        dict: The decoded payload of the JWT token if verification is successful.
+
+    Raises:
+        InvalidTokenError: If the token is invalid or verification fails.
+    """
+    try:
+        decoded_token = jwt.decode(
+            token, PUBLIC_KEY, algorithms=["RS256"], audience=audience
+        )
+        return decoded_token
+    except InvalidTokenError as e:
+        logger.info(e)
+        raise InvalidTokenError("This token is bad")
