@@ -30,16 +30,7 @@ async def login(
         if is_password_verified:
             logger.info(f"user: {user_login.email} has logged in")
             token = create_jwt_token(user_id=1, audience=user_login.audience)
-            response.set_cookie(
-                key="auth_token",
-                value=token,
-                httponly=True,
-                max_age=1800,
-                expires=1800,
-                secure=True,
-                samesite="lax",
-            )
-            return {"message": f"user {user_login.email} has logged in"}
+            return {"authToken": token}
         else:
             logger.info(f"User: {user_login.email} has failed login invalid password")
             raise HTTPException(
