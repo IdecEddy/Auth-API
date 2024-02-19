@@ -20,7 +20,7 @@ def test_auth():
 
 @router.post("/login")
 async def login(
-    user_login: UserLogin, response: Response, db: Session = Depends(get_db)
+    user_login: UserLogin, db: Session = Depends(get_db)
 ):
     user_record = db.query(User).filter(User.email == user_login.email).first()
     if user_record:
