@@ -2,5 +2,6 @@ from pydantic import BaseModel
 
 
 class AuthToken(BaseModel):
-    token: str
+    refreshToken: str
+    authToken: str
     audience: str
