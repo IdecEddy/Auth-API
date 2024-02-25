@@ -29,8 +29,9 @@ async def login(
         )
         if is_password_verified:
             logger.info(f"user: {user_login.email} has logged in")
-            token = create_jwt_token(user_id=1, audience=user_login.audience)
-            return {"authToken": token}
+            auth_token = create_jwt_token(user_id=1, audience=user_login.audience)
+            refresh_token = create_jwt_token(user_id=1, audience=user_login.audience)
+            return {"authToken": auth_token, "refreshToken": refresh_token}
         else:
             logger.info(f"User: {user_login.email} has failed login invalid password")
             raise HTTPException(
@@ -42,9 +43,9 @@ async def login(
 
 @router.post("/verify_token")
 def verify_auth_token(auth_token: AuthToken):
-    if auth_token.token:
+    if auth_token.authToken:
         try:
-            payload = verify_jwt_token(auth_token.token, auth_token.audience)
-            return payload
+            payload = verify_jwt_token(auth_token.authToken, auth_token.audience)
+            return {"payload": payload, "auth_token": auth_token.authToken, "refresh_token": auth_token.refreshToken }
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
