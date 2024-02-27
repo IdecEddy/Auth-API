@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Response, HTTPException
+from enum import verify
+from fastapi import APIRouter, Depends, Response, HTTPException, status
 from loggingconf import setup_logging
 from sqlalchemy.orm import Session
 from utils.token import create_jwt_token, verify_jwt_token
@@ -45,7 +46,15 @@ async def login(
 def verify_auth_token(auth_token: AuthToken):
     if auth_token.authToken:
         try:
-            payload = verify_jwt_token(auth_token.authToken, auth_token.audience)
-            return {"payload": payload, "auth_token": auth_token.authToken, "refresh_token": auth_token.refreshToken }
+            verify_jwt_token(auth_token.authToken, auth_token.audience)
+            return { "status": 200, "authToken": auth_token.authToken, "refreshToken": auth_token.refreshToken, "message": "logged in using authToken" }
+        except InvalidTokenError:
+            logger.info("could not loggin using the auth token")
+    if auth_token.refreshToken:
+        try:
+            verify_jwt_token(auth_token.refreshToken, auth_token.audience)
+            authToken = create_jwt_token(user_id=1, audience=auth_token.audience, expires_delta=1)
+            return { "status": 301, "authToken": authToken, "refreshToken": auth_token.refreshToken, "message": "logged in using refreshToken" }
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
+    return HTTPException(status_code=401, detail="login failed invaild token") 
