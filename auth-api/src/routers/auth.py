@@ -20,9 +20,7 @@ def test_auth():
 
 
 @router.post("/login")
-async def login(
-    user_login: UserLogin, db: Session = Depends(get_db)
-):
+async def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user_record = db.query(User).filter(User.email == user_login.email).first()
     if user_record:
         is_password_verified = verify_password(
@@ -46,19 +44,24 @@ async def login(
 def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
     if refreshTokenRequest.refreshToken:
         try:
-            verify_jwt_token(refreshTokenRequest.refreshToken, refreshTokenRequest.audience)
-            authToken = create_jwt_token(user_id=1, audience=refreshTokenRequest.audience, expires_delta=1)
-            return { "status": 200, "authToken":authToken }
+            verify_jwt_token(
+                refreshTokenRequest.refreshToken, refreshTokenRequest.audience
+            )
+            authToken = create_jwt_token(
+                user_id=1, audience=refreshTokenRequest.audience, expires_delta=1
+            )
+            return {"status": 200, "authToken": authToken}
         except InvalidTokenError:
-            raise HTTPException( status_code=401, detail="Login failed invalid token")
+            raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token")
+
 
 @router.post("/verify_auth_token")
 def verify_auth_token(authTokenRequest: AuthTokenRequest):
     if authTokenRequest.authToken:
         try:
             verify_jwt_token(authTokenRequest.authToken, authTokenRequest.audience)
-            return { "status": 200 }
+            return {"status": 200}
         except InvalidTokenError:
-            raise HTTPException( status_code=401, detail="Login failed invalid token")
+            raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token")
