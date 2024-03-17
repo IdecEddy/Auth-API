@@ -60,8 +60,8 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
 def verify_auth_token(authTokenRequest: AuthTokenRequest):
     if authTokenRequest.authToken:
         try:
-            verify_jwt_token(authTokenRequest.authToken, authTokenRequest.audience)
-            return {"status": 200}
+            payload = verify_jwt_token(authTokenRequest.authToken, authTokenRequest.audience)
+            return {"status": 200, "payload": payload}
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token")
