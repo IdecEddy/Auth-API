@@ -4,7 +4,7 @@ from models.base import Base
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "authAPI_Users"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
