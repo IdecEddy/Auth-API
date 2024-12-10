@@ -7,8 +7,9 @@ auth-api/src/logs/*log*
 __pycache__
 auth-api/include
 auth-api/src/auth.db
-cert.pem
-key.pem
-private.key
-public.key
+auth-api/cert.crt
+auth-api/cert.pem
+auth-api/key.pem
+auth-api/private.key
+auth-api/public.key
 .env
