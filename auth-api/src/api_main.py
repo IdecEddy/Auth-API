@@ -10,7 +10,8 @@ def create_app() -> FastAPI:
     # Replace "http://localhost:3000" with the actual origin of your frontend app
     origins = [
         "http://localhost:3000",  # Adjust this to match your frontend's URL
-        "https://localhost:3000",  # If your frontend is served over HTTPS
+        "https://localhost:3000", # If your frontend is served over HTTPS
+        "*"  
     ]
 
     app.add_middleware(
