@@ -1,8 +1,9 @@
 auth-api/bin
 auth-api/lib
+auth-api/lib64
 auth-api/src/__pycache__
 auth-api/pyvenv.cfg
-auth-api/src/logs
+auth-api/src/logs/*log*
 __pycache__
 auth-api/include
 auth-api/src/auth.db
