@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Response, HTTPException, status
 from loggingconf import setup_logging
 from sqlalchemy.orm import Session
-from utils.token import create_jwt_token, verify_jwt_token
+from utils.token import create_jwt_token,create_jwt_auth_token , verify_jwt_token
 from utils.hashing import verify_password
 from utils.db import get_db
 from models.user_login import UserLogin
@@ -19,6 +19,10 @@ def test_auth():
     return "Welcome to the auth api"
 
 
+@router.get("log")
+def log():
+    return {"status": 200, "msg": "you are logged in"}
+
 @router.post("/login")
 async def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user_record = db.query(User).filter(User.email == user_login.email).first()
@@ -28,7 +32,7 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
         )
         if is_password_verified:
             logger.info(f"user: {user_login.email} has logged in")
-            auth_token = create_jwt_token(user_id=1, audience=user_login.audience)
+            auth_token = create_jwt_auth_token(user_id=1, audience=user_login.audience)
             refresh_token = create_jwt_token(user_id=1, audience=user_login.audience)
             return {"authToken": auth_token, "refreshToken": refresh_token}
         else:
@@ -47,7 +51,7 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
             verify_jwt_token(
                 refreshTokenRequest.refreshToken, refreshTokenRequest.audience
             )
-            authToken = create_jwt_token(
+            authToken = create_jwt_auth_token(
                 user_id=1, audience=refreshTokenRequest.audience, expires_delta=1
             )
             return {"status": 200, "authToken": authToken}

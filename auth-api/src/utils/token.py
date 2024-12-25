@@ -26,7 +26,35 @@ else:
     raise IOError(f"Could not load public key from path {PUBLIC_KEY_PATH}")
 
 
-def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> str:
+def create_jwt_token(user_id: int, audience: str, expires_delta: int = 10) -> str:
+    """
+    Create a JWT token.
+
+    Args:
+    user_id (int): User identifier to include in the token.
+    secret_key (str): The secret key used to sign the token.
+    expires_delta (int): Token expiration time in minutes.
+
+    Returns:
+    str: Encoded JWT token.
+    """
+    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=expires_delta)
+    iss = "auth-api"
+    sub = "device-id"
+    aud = audience
+    payload = {
+        "user_id": user_id,
+        "iss": iss,
+        "sub": sub,
+        "aud": aud,
+        "exp": expire,
+    }
+
+    token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
+
+    return token
+
+def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 1) -> str:
     """
     Create a JWT token.
 
