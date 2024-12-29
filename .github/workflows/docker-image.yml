@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - master
+    tags:
+      - 'v*.*.*'  # Trigger on version tags like v1.0.0
 
 jobs:
   build-and-push:
@@ -24,6 +26,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ghcr.io
+          # If using a PAT, uncomment and set the following:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
@@ -32,12 +35,14 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ github.repository_owner }}/auth-api:latest
-            ghcr.io/${{ github.repository_owner }}/auth-api:${{ github.ref_name }}
-            ghcr.io/${{ github.repository_owner }}/auth-api:${{ github.sha }}
+            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:latest
+            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:${{ github.ref_name }}
+            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:${{ github.sha }}
+            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:${{ github.ref }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Image Info
-        run: echo "Docker image pushed to ghcr.io/${{ github.repository_owner }}/auth-api:latest"
+        run: echo "Docker image pushed to ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:latest"
