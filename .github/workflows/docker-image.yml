@@ -46,8 +46,6 @@ jobs:
             ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:latest
             ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:${{ github.ref_name }}
             ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:${{ github.sha }}
-            # Removed the problematic tag below
-            # ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:${{ github.ref }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
