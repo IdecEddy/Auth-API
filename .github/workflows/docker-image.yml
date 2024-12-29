@@ -16,6 +16,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # Step to convert repository owner to lowercase
+      - name: Set Lowercase Repository Owner
+        run: |
+          LOWERCASE_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "LOWERCASE_OWNER=${LOWERCASE_OWNER}" >> $GITHUB_ENV
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -37,12 +43,12 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:latest
-            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:${{ github.ref_name }}
-            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:${{ github.sha }}
-            ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:${{ github.ref }}
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:latest
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:${{ github.ref_name }}
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:${{ github.sha }}
+            ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:${{ github.ref }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Image Info
-        run: echo "Docker image pushed to ghcr.io/${{ toLower(github.repository_owner) }}/auth-api:latest"
+        run: echo "Docker image pushed to ghcr.io/${{ env.LOWERCASE_OWNER }}/auth-api:latest"
