@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo $SSL_KEY_BASE64
+echo $SSL_CERT_BASE64
+echo $JWT_PRIVATE_KEY_BASE64
+echo $JWT_PUBLIC_KEY_BASE64

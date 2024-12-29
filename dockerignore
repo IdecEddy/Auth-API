@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+key.pem
+cert.crt
+cert.pem
+private.key
+public.key
+pyvenv.cfg
+.git
+*.git
