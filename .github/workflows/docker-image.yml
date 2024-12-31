@@ -33,8 +33,8 @@ jobs:
         with:
           registry: ghcr.io
           # If using a PAT, uncomment and set the following:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          # username: ${{ github.actor }}
+          # password: ${{ secrets.GHCR_PAT }}
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
