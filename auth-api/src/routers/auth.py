@@ -56,9 +56,9 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
             )
             return {"status": 200, "authToken": authToken}
         except InvalidTokenError as e:
-            raise HTTPException(status_code=401, detail="Login failed invalid token")
+            raise HTTPException(status_code=401, detail="Login failed invalid token 1")
     print(refreshTokenRequest.refreshToken)
-    return HTTPException(status_code=401, detail="Login failed invalid token")
+    return HTTPException(status_code=401, detail="Login failed invalid token 2")
 
 
 @router.post("/verify_auth_token")
