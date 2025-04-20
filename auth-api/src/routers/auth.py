@@ -57,6 +57,7 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
             return {"status": 200, "authToken": authToken}
         except InvalidTokenError as e:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
+    print(refreshTokenRequest.refreshToken)
     return HTTPException(status_code=401, detail="Login failed invalid token")
 
 
