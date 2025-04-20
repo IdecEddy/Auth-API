@@ -100,6 +100,7 @@ async def verify_tokens(
             refreshToken = verify_jwt_token(
                 tokensAuthRequest.refreshToken, tokensAuthRequest.audience
             )
+            print(refreshToken)
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
