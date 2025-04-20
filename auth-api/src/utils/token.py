@@ -54,6 +54,7 @@ def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> st
 
     return token
 
+
 def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 60) -> str:
     """
     Create a JWT token.
@@ -101,5 +102,5 @@ def verify_jwt_token(token: str, audience: str) -> dict:
             token, PUBLIC_KEY, algorithms=["RS256"], audience=audience
         )
         return decoded_token
-    except InvalidTokenError as e:
+    except InvalidTokenError:
         raise InvalidTokenError()

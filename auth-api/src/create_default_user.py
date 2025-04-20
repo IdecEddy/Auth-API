@@ -9,11 +9,7 @@ def main():
     password = input("Enter the password: ")
     name = input("Enter a name for the user: ")
     email = input("Enter a email for the user: ")
-    new_user = User(
-        name=name,
-        email=email,
-        hashed_password=hash_password(password)
-    )
+    new_user = User(name=name, email=email, hashed_password=hash_password(password))
 
     db.add(new_user)
     db.commit()

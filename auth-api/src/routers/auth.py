@@ -79,4 +79,11 @@ def verify_tokens(tokensAuthRequest: TokenAuthRequest):
     if tokensAuthRequest.refreshToken:
         logger.info("Trying to login with refresh token")
         logger.info(f"cookie vale: {tokensAuthRequest.refreshToken}")
+        
+        verify_jwt_token(tokensAuthRequest.refreshToken, tokensAuthRequest.audience)
+        logger.info("Token verified successfully")
+        auth_token = create_jwt_auth_token(
+            user_id=1, audience=tokensAuthRequest.audience
+        )
+        
     pass
