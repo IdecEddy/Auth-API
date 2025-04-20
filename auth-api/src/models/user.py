@@ -10,6 +10,7 @@ class User(Base):
     name = Column(String)
     email = Column(String, unique=True)
     hashed_password = Column(String)
+    role = Column(String)
     date_created = Column(DateTime(timezone=True), server_default=func.now())
     date_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
