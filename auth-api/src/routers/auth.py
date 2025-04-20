@@ -48,14 +48,10 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
 def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
     if refreshTokenRequest.refreshToken:
         try:
-            decode = verify_jwt_token(
+            verify_jwt_token(
                 refreshTokenRequest.refreshToken, refreshTokenRequest.audience
             )
-            print(decode)
-            authToken = create_jwt_auth_token(
-                user_id=1, audience=refreshTokenRequest.audience
-            )
-            return {"status": 200, "authToken": authToken}
+            return {"status": 200, "authToken": "test"}
         except InvalidTokenError as e:
             raise HTTPException(status_code=401, detail="Login failed invalid token 1")
     print(refreshTokenRequest.refreshToken)
