@@ -13,3 +13,5 @@ auth-api/key.pem
 auth-api/private.key
 auth-api/public.key
 .env
+auth-api/src/alembic
+alembic.ini
