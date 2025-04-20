@@ -53,7 +53,7 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
             )
             print(decode)
             authToken = create_jwt_auth_token(
-                user_id=1, audience=refreshTokenRequest.audience, expires_delta=1
+                user_id=1, audience=refreshTokenRequest.audience
             )
             return {"status": 200, "authToken": authToken}
         except InvalidTokenError as e:
