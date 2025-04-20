@@ -102,5 +102,5 @@ def verify_jwt_token(token: str, audience: str) -> dict:
         )
         return decoded_token
     except InvalidTokenError as e:
-        print(e)
+        print("Hello world!")
         raise InvalidTokenError("This token is bad")
