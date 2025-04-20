@@ -47,6 +47,7 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
 @router.post("/verify_refresh_token")
 def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
     if refreshTokenRequest.refreshToken:
+        print(refreshTokenRequest.refreshToken)
         try:
             verify_jwt_token(
                 refreshTokenRequest.refreshToken, refreshTokenRequest.audience
