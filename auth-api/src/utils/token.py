@@ -100,7 +100,7 @@ def verify_jwt_token(token: str, audience: str) -> dict:
         decoded_token = jwt.decode(
             token, PUBLIC_KEY, algorithms=["RS256"], audience=audience
         )
+        print("Hello world!")
         return decoded_token
     except InvalidTokenError as e:
-        print("Hello world!")
         raise InvalidTokenError("This token is bad")
