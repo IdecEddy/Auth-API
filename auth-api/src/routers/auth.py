@@ -83,7 +83,8 @@ def verify_tokens(tokensAuthRequest: TokenAuthRequest):
         verify_jwt_token(tokensAuthRequest.refreshToken, tokensAuthRequest.audience)
         logger.info("Token verified successfully")
         auth_token = create_jwt_auth_token(
-            user_id=1, audience=tokensAuthRequest.audience
+            user_id=1, audience=tokensAuthRequest.audience, expires_delta=5
         )
+        logger.info("New authentication token issued.")
         
     pass
