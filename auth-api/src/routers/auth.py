@@ -106,7 +106,7 @@ async def verify_tokens(
         logger.info("Token verified successfully")
         user_record = db.query(User).filter(User.id == refreshToken['user_id']).first()
         auth_token = create_jwt_auth_token(
-            user_id=refreshToken.user_id,
+            user_id=refreshToken['user_id'],
             audience=tokensAuthRequest.audience,
             role=user_record.role,
             expires_delta=5,
