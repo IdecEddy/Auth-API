@@ -104,7 +104,7 @@ async def verify_tokens(
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
-        user_record = db.query(User).filter(User.id == refreshToken.user_id).first()
+        user_record = db.query(User).filter(User.id == refreshToken['user_id']).first()
         auth_token = create_jwt_auth_token(
             user_id=refreshToken.user_id,
             audience=tokensAuthRequest.audience,
