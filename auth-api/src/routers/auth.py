@@ -80,6 +80,7 @@ def verify_tokens(tokensAuthRequest: TokenAuthRequest):
         logger.info("Trying to login with auth token")
         try:
             verify_jwt_token(tokensAuthRequest.authToken, tokensAuthRequest.audience)
+            logger.info("Token verified successfully")
             return {"status": 200, "authToken": tokensAuthRequest.authToken}
         except InvalidTokenError:
             logger.info(
