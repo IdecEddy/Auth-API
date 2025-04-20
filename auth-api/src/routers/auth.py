@@ -78,10 +78,19 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 def verify_tokens(tokensAuthRequest: TokenAuthRequest):
     if tokensAuthRequest.authToken:
         logger.info("Trying to login with auth token")
+        try:
+            verify_jwt_token(tokensAuthRequest.authToken, tokensAuthRequest.audience)
+            return {"status": 200, "authToken": tokensAuthRequest.authToken}
+        except InvalidTokenError:
+            logger.info(
+                "Failed to login using auth token falling back to refresh token"
+            )
     if tokensAuthRequest.refreshToken:
         logger.info("Trying to login with refresh token")
-        logger.info(f"cookie vale: {tokensAuthRequest.refreshToken}")
-        verify_jwt_token(tokensAuthRequest.refreshToken, tokensAuthRequest.audience)
+        try:
+            verify_jwt_token(tokensAuthRequest.refreshToken, tokensAuthRequest.audience)
+        except InvalidTokenError:
+            raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
         auth_token = create_jwt_auth_token(
             user_id=1, audience=tokensAuthRequest.audience, expires_delta=5
