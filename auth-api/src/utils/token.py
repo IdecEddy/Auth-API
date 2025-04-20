@@ -79,7 +79,6 @@ def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 1) -
     }
 
     token = jwt.encode(payload, PRIVATE_KEY, algorithm="RS256")
-    print(token)
     return token
 
 

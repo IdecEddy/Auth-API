@@ -47,7 +47,6 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
 @router.post("/verify_refresh_token")
 def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
     if refreshTokenRequest.refreshToken:
-        print(refreshTokenRequest.refreshToken)
         try:
             verify_jwt_token(
                 refreshTokenRequest.refreshToken, refreshTokenRequest.audience
@@ -57,7 +56,6 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
             )
             return {"status": 200, "authToken": authToken}
         except InvalidTokenError as e:
-            print(e)
             raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token")
 
@@ -69,6 +67,5 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
             payload = verify_jwt_token(authTokenRequest.authToken, authTokenRequest.audience)
             return {"status": 200, "payload": payload}
         except InvalidTokenError as e:
-            print(e)
             raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token")
