@@ -74,6 +74,8 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
     return HTTPException(status_code=401, detail="Login failed invalid token")
 
 
-@router.post("/verifyTokens")
+@router.post("/verifyWithTokens")
 def verify_tokens(tokensAuthRequest: TokenAuthRequest):
+    if tokensAuthRequest.authToken:
+        logger.info("Trying to login with auth token")
     pass
