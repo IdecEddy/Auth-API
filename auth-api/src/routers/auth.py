@@ -56,6 +56,7 @@ def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
 def verify_auth_token(authTokenRequest: AuthTokenRequest):
     if authTokenRequest.authToken:
         try:
+            print(authTokenRequest.authToken)
             payload = verify_jwt_token(authTokenRequest.authToken, authTokenRequest.audience)
             return {"status": 200, "payload": payload}
         except InvalidTokenError as e:
