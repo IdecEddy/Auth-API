@@ -29,7 +29,6 @@ def log():
 @router.post("/login")
 async def login(user_login: UserLogin, db: Session = Depends(get_db)):
     user_record = db.query(User).filter(User.email == user_login.email).first()
-    print("Hello")
     if user_record:
         is_password_verified = verify_password(
             user_login.password, str(user_record.hashed_password)
@@ -80,7 +79,9 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 
 
 @router.post("/verifyWithTokens")
-def verify_tokens(tokensAuthRequest: TokenAuthRequest):
+async def verify_tokens(
+    tokensAuthRequest: TokenAuthRequest, db: Session = Depends(get_db)
+):
     if tokensAuthRequest.authToken:
         logger.info("Trying to login with auth token")
         try:
@@ -94,12 +95,18 @@ def verify_tokens(tokensAuthRequest: TokenAuthRequest):
     if tokensAuthRequest.refreshToken:
         logger.info("Trying to login with refresh token")
         try:
-            verify_jwt_token(tokensAuthRequest.refreshToken, tokensAuthRequest.audience)
+            refreshToken = verify_jwt_token(
+                tokensAuthRequest.refreshToken, tokensAuthRequest.audience
+            )
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
+        user_record = db.query(User).filter(User.id == refreshToken.user_id).first()
         auth_token = create_jwt_auth_token(
-            user_id=1, audience=tokensAuthRequest.audience, expires_delta=5
+            user_id=refreshToken.user_id,
+            audience=tokensAuthRequest.audience,
+            role=user_record.role,
+            expires_delta=5,
         )
         logger.info("New authentication token issued.")
         return {"status": 200, "authToken": auth_token}

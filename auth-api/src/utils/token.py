@@ -55,13 +55,15 @@ def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> st
     return token
 
 
-def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 60) -> str:
+def create_jwt_auth_token(user_id: int, audience: str, role: str, expires_delta: int = 60) -> str:
     """
     Create a JWT token.
 
     Args:
     user_id (int): User identifier to include in the token.
     secret_key (str): The secret key used to sign the token.
+    role (str): This is the users access role.
+    audience (str): who is this token for.
     expires_delta (int): Token expiration time in minutes.
 
     Returns:
@@ -73,6 +75,7 @@ def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 60) 
     aud = audience
     payload = {
         "user_id": user_id,
+        "role": role,
         "iss": iss,
         "sub": sub,
         "aud": aud,
