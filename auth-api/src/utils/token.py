@@ -55,7 +55,9 @@ def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> st
     return token
 
 
-def create_jwt_auth_token(user_id: int, audience: str, role: str, expires_delta: int = 60) -> str:
+def create_jwt_auth_token(
+    user_id: int, audience: str, role: str, expires_delta: int = 60
+) -> str:
     """
     Create a JWT token.
 
