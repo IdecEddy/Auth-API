@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Depends, Response, HTTPException, status
-from loggingconf import setup_logging
-from sqlalchemy.orm import Session
-from utils.token import create_jwt_token,create_jwt_auth_token , verify_jwt_token
-from utils.hashing import verify_password
-from utils.db import get_db
-from models.user_login import UserLogin
-from models.user import User
-from models.refresh_token_request import RefreshTokenRequest
-from models.auth_token_request import AuthTokenRequest
+from fastapi import APIRouter, Depends, HTTPException
 from jwt.exceptions import InvalidTokenError
+from sqlalchemy.orm import Session
+
+from loggingconf import setup_logging
+from models.auth_token_request import AuthTokenRequest
+from models.refresh_token_request import RefreshTokenRequest
+from models.token_auth_request import TokenAuthRequest
+from models.user import User
+from models.user_login import UserLogin
+from utils.db import get_db
+from utils.hashing import verify_password
+from utils.token import create_jwt_auth_token, create_jwt_token, verify_jwt_token
 
 router = APIRouter(prefix="/api/v1/auth")
 logger = setup_logging()
@@ -22,6 +24,7 @@ def test_auth():
 @router.get("log")
 def log():
     return {"status": 200, "msg": "you are logged in"}
+
 
 @router.post("/login")
 async def login(user_login: UserLogin, db: Session = Depends(get_db)):
@@ -48,9 +51,11 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
 def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
     if refreshTokenRequest.refreshToken:
         try:
-            verify_jwt_token(refreshTokenRequest.refreshToken, refreshTokenRequest.audience)
+            verify_jwt_token(
+                refreshTokenRequest.refreshToken, refreshTokenRequest.audience
+            )
             return {"status": 200, "authToken": "test"}
-        except InvalidTokenError as e:
+        except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token 2")
 
@@ -60,8 +65,15 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
     if authTokenRequest.authToken:
         try:
             print(authTokenRequest.authToken)
-            payload = verify_jwt_token(authTokenRequest.authToken, authTokenRequest.audience)
+            payload = verify_jwt_token(
+                authTokenRequest.authToken, authTokenRequest.audience
+            )
             return {"status": 200, "payload": payload}
-        except InvalidTokenError as e:
+        except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
     return HTTPException(status_code=401, detail="Login failed invalid token")
+
+
+@router.post("/verifyTokens")
+def verify_tokens(tokensAuthRequest: TokenAuthRequest):
+    pass
