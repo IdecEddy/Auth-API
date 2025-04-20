@@ -76,6 +76,7 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 
 @router.post("/verifyWithTokens")
 def verify_tokens(tokensAuthRequest: TokenAuthRequest):
+    logger.info("Trying to login with auth token")
     if tokensAuthRequest.authToken:
-        logger.error("Trying to login with auth token")
+        logger.info("Trying to login with auth token")
     pass
