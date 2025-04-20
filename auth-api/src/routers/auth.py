@@ -48,9 +48,10 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
 def verify_refresh_token(refreshTokenRequest: RefreshTokenRequest):
     if refreshTokenRequest.refreshToken:
         try:
-            verify_jwt_token(
+            decode = verify_jwt_token(
                 refreshTokenRequest.refreshToken, refreshTokenRequest.audience
             )
+            print(decode)
             authToken = create_jwt_auth_token(
                 user_id=1, audience=refreshTokenRequest.audience, expires_delta=1
             )
