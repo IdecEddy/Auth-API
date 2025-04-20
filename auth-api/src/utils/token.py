@@ -26,7 +26,7 @@ else:
     raise IOError(f"Could not load public key from path {PUBLIC_KEY_PATH}")
 
 
-def create_jwt_token(user_id: int, audience: str, expires_delta: int = 2) -> str:
+def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> str:
     """
     Create a JWT token.
 
@@ -54,7 +54,7 @@ def create_jwt_token(user_id: int, audience: str, expires_delta: int = 2) -> str
 
     return token
 
-def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 2) -> str:
+def create_jwt_auth_token(user_id: int, audience: str, expires_delta: int = 60) -> str:
     """
     Create a JWT token.
 
