@@ -35,8 +35,12 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
         )
         if is_password_verified:
             logger.info(f"user: {user_login.email} has logged in")
-            auth_token = create_jwt_auth_token(user_id=1, audience=user_login.audience)
-            refresh_token = create_jwt_token(user_id=1, audience=user_login.audience)
+            auth_token = create_jwt_auth_token(
+                user_id=user_record.id, audience=user_login.audience
+            )
+            refresh_token = create_jwt_token(
+                user_id=user_record.id, audience=user_login.audience
+            )
             return {"authToken": auth_token, "refreshToken": refresh_token}
         else:
             logger.info(f"User: {user_login.email} has failed login invalid password")
