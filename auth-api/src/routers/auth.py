@@ -78,4 +78,5 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 def verify_tokens(tokensAuthRequest: TokenAuthRequest):
     if tokensAuthRequest.refreshToken:
         logger.info("Trying to login with refresh token")
+        logger.info(f"cookie vale: {tokensAuthRequest.refreshToken}")
     pass
