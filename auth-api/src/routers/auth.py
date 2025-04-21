@@ -102,6 +102,7 @@ async def verify_tokens(
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
+        print(tokensAuthRequest.refreshToken)
         refresh_token_record = (
             db.query(RefreshTokenDB)
             .filter(RefreshTokenDB.token == tokensAuthRequest.refreshToken)
