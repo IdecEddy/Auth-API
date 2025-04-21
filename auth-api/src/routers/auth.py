@@ -42,7 +42,7 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
             refresh_token_db = RefreshTokenDB(token=refresh_token, version=1)
             db.add(refresh_token_db)
             db.commit()
-            logger.info(f'saving Token: {refresh_token} with version: 1')
+            logger.info(f"saving Token: {refresh_token} with version: 1")
             return {"refreshToken": refresh_token}
         else:
             logger.info(f"User: {user_login.email} has failed login invalid password")
@@ -85,11 +85,17 @@ async def verify_tokens(
     tokensAuthRequest: TokenAuthRequest, db: Session = Depends(get_db)
 ):
     if tokensAuthRequest.authToken:
+        # Try to login using the auth token
         logger.info("Trying to login with auth token")
         try:
+            # Verify the token
             verify_jwt_token(tokensAuthRequest.authToken, tokensAuthRequest.audience)
             logger.info("Token verified successfully")
-            return {"status": 200, "authToken": tokensAuthRequest.authToken, "refreshToken": tokensAuthRequest.refreshToken}
+            return {
+                "status": 200,
+                "authToken": tokensAuthRequest.authToken,
+                "refreshToken": tokensAuthRequest.refreshToken,
+            }
         except InvalidTokenError:
             logger.info(
                 "Failed to login using auth token falling back to refresh token"
@@ -103,14 +109,18 @@ async def verify_tokens(
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
+        logger.info(f'searching for {tokensAuthRequest}')
         refresh_token_record = (
             db.query(RefreshTokenDB)
             .filter(RefreshTokenDB.token == tokensAuthRequest.refreshToken)
             .first()
         )
         if not refresh_token_record:
+            logger.info(f'could not find {tokensAuthRequest.refreshToken}')
             raise HTTPException(status_code=404, detail="Refresh token not found")
-        logger.info(f"We got a record with the provided token version {refresh_token_record.version}")
+        logger.info(
+            f"We got a record with the provided token version {refresh_token_record.version}"
+        )
         refresh_token_id = refresh_token_record.id
         new_version = refreshToken["version"] + 1
         new_refresh_token = create_jwt_token(
