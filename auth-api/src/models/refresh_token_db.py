@@ -3,8 +3,8 @@ from sqlalchemy.sql import func
 from models.base import Base
 
 
-class AuthTokenDB(Base):
-    __tablename__ = "authAPI_Auth_Token"
+class RefreshTokenDB(Base):
+    __tablename__ = "authAPI_Refresh_Token"
 
     id = Column(Integer, primary_key=True)
     token = Column(String)

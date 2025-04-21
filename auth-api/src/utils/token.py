@@ -26,13 +26,16 @@ else:
     raise IOError(f"Could not load public key from path {PUBLIC_KEY_PATH}")
 
 
-def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> str:
+def create_jwt_token(
+    user_id: int, audience: str, token_version: int = 1, expires_delta: int = 60
+) -> str:
     """
     Create a JWT token.
 
     Args:
     user_id (int): User identifier to include in the token.
     secret_key (str): The secret key used to sign the token.
+    token_version (int): This is the token version that rotates each time we use it.
     expires_delta (int): Token expiration time in minutes.
 
     Returns:
@@ -44,6 +47,7 @@ def create_jwt_token(user_id: int, audience: str, expires_delta: int = 60) -> st
     aud = audience
     payload = {
         "user_id": user_id,
+        "version": token_version,
         "iss": iss,
         "sub": sub,
         "aud": aud,
