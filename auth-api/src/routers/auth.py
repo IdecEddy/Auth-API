@@ -114,7 +114,7 @@ async def verify_tokens(
         new_refresh_token = create_jwt_token(
             user_id=refreshToken["user_id"],
             audience=tokensAuthRequest.audience,
-            version=new_version,
+            token_version=new_version,
         )
         db.query(RefreshTokenDB).filter(RefreshTokenDB.id == refresh_token_id).update(
             {"token": new_refresh_token, "version": new_version}
