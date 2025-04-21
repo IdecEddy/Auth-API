@@ -42,6 +42,7 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
             refresh_token_db = RefreshTokenDB(token=refresh_token, version=1)
             db.add(refresh_token_db)
             db.commit()
+            logger.info(f'saving Token: {refresh_token} with version: 1')
             return {"refreshToken": refresh_token}
         else:
             logger.info(f"User: {user_login.email} has failed login invalid password")
@@ -102,7 +103,6 @@ async def verify_tokens(
         except InvalidTokenError:
             raise HTTPException(status_code=401, detail="Login failed invalid token")
         logger.info("Token verified successfully")
-        print(tokensAuthRequest.refreshToken)
         refresh_token_record = (
             db.query(RefreshTokenDB)
             .filter(RefreshTokenDB.token == tokensAuthRequest.refreshToken)
@@ -110,6 +110,7 @@ async def verify_tokens(
         )
         if not refresh_token_record:
             raise HTTPException(status_code=404, detail="Refresh token not found")
+        logger.info(f"We got a record with the provided token version {refresh_token_record.version}")
         refresh_token_id = refresh_token_record.id
         new_version = refreshToken["version"] + 1
         new_refresh_token = create_jwt_token(
