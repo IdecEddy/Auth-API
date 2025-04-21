@@ -89,7 +89,7 @@ async def verify_tokens(
         try:
             verify_jwt_token(tokensAuthRequest.authToken, tokensAuthRequest.audience)
             logger.info("Token verified successfully")
-            return {"status": 200, "authToken": tokensAuthRequest.authToken}
+            return {"status": 200, "authToken": tokensAuthRequest.authToken, "refreshToken": tokensAuthRequest.refreshToken}
         except InvalidTokenError:
             logger.info(
                 "Failed to login using auth token falling back to refresh token"
