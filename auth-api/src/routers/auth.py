@@ -140,6 +140,7 @@ async def verify_tokens(
             expires_delta=5,
         )
         logger.info("New authentication token issued.")
+        logger.info(f'sent off new refresh token {new_refresh_token}')
         return {
             "status": 200,
             "authToken": auth_token,
