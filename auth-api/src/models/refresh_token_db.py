@@ -8,7 +8,7 @@ class RefreshTokenDB(Base):
 
     id = Column(Integer, primary_key=True)
     token = Column(String)
-    version = Column(Integer, unique=True)
+    version = Column(Integer)
     date_created = Column(DateTime(timezone=True), server_default=func.now())
     date_updated = Column(DateTime(timezone=True), onupdate=func.now())
 
