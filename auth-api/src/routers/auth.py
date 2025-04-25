@@ -121,10 +121,10 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
         raise HTTPException(status_code=401, detail="Token version mismatch")
     logger.info("token versions match between database and request")
     # Create a new refresh_token using the old one but increment the version by one.
-    new_refresh_token = create_jwt_auth_token(
+    new_refresh_token = create_jwt_token(
         user_id=payload.get("user_id"),
         audience=tokenAudience,
-        version=token_version + 1,
+        token_version=token_version + 1,
     )
     logger.info(f"Generated new refresh token with version: {token_version + 1}")
     # Save the new refresh token to the database
