@@ -89,7 +89,7 @@ async def verify_tokens(
         tokenAudience = tokensAuthRequest.audience
         authorize_with_auth_token(authToken, tokenAudience)
         return {
-            "method": "refresh_token",
+            "method": "auth_token",
             "status": 200,
         }
 
@@ -108,7 +108,7 @@ async def verify_tokens(
 def authorize_with_auth_token(auth_token: str, tokenAudience: str):
     # Verify the token is a valid token
     try:
-        payload = verify_jwt_token(token=auth_token, audience=tokenAudience)
+        verify_jwt_token(token=auth_token, audience=tokenAudience)
         logger.info("Auth token is valid")
     except InvalidTokenError:
         logger.info("Invalid auth token")
