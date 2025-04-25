@@ -37,7 +37,9 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
         if is_password_verified:
             logger.info(f"user: {user_login.email} has logged in")
             refresh_token = create_jwt_token(
-                user_id=user_record.id, audience=user_login.audience
+                user_id=user_record.id,
+                audience=user_login.audience,
+                expires_delta=datetime.timedelta(days=30)
             )
             refresh_token_db = RefreshTokenDB(token=refresh_token, version=1)
             db.add(refresh_token_db)
