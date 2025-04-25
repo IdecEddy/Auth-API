@@ -110,8 +110,11 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
         logger.info("Refresh token is valid")
     except InvalidTokenError:
         logger.info("Invalid refresh token")
+        # Delete the invalid refresh token from the database
+        db.delete(token_record)
+        db.commit()
+        logger.info("Deleted invalid refresh token from database")
         raise HTTPException(status_code=401, detail="Invalid refresh token")
-
     # ensure that the version in the verified token and the token in the database match.
     token_version = payload.get("version")
     if token_version != token_record.version:
