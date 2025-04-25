@@ -88,7 +88,7 @@ async def verify_tokens(
         refreshToken = tokensAuthRequest.refreshToken
         tokenAudience = tokensAuthRequest.audience
         payload = authorize_with_refresh_token(refreshToken, tokenAudience, db)
-        return {"refreshToken": payload.newRefreshToken}
+        return {"refreshToken": payload["newRefreshToken"]}
     pass
 
 
