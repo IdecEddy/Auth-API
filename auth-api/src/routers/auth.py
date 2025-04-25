@@ -42,7 +42,7 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
             refresh_token_db = RefreshTokenDB(token=refresh_token, version=1)
             db.add(refresh_token_db)
             db.commit()
-            logger.info(f"saving Token: {refresh_token} with version: 1")
+            logger.info(f"saving Token with version: 1")
             return {"refreshToken": refresh_token}
         else:
             logger.info(f"User: {user_login.email} has failed login invalid password")
@@ -84,7 +84,6 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 async def verify_tokens(
     tokensAuthRequest: TokenAuthRequest, db: Session = Depends(get_db)
 ):
-    logger.info(tokensAuthRequest.authToken)
     if tokensAuthRequest.authToken:
         authToken = tokensAuthRequest.authToken
         tokenAudience = tokensAuthRequest.audience
