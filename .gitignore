@@ -15,3 +15,4 @@ auth-api/public.key
 .env
 auth-api/src/alembic
 alembic.ini
+em_notes

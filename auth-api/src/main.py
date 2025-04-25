@@ -4,7 +4,6 @@ from api_main import create_app
 from utils.db import init_db
 import uvicorn
 
-
 init_db()
 app = create_app()
 

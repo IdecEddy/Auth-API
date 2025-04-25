@@ -84,65 +84,19 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 async def verify_tokens(
     tokensAuthRequest: TokenAuthRequest, db: Session = Depends(get_db)
 ):
-    if tokensAuthRequest.authToken:
-        # Try to login using the auth token
-        logger.info("Trying to login with auth token")
-        try:
-            # Verify the token
-            verify_jwt_token(tokensAuthRequest.authToken, tokensAuthRequest.audience)
-            logger.info("Token verified successfully")
-            return {
-                "status": 200,
-                "authToken": tokensAuthRequest.authToken,
-                "refreshToken": tokensAuthRequest.refreshToken,
-            }
-        except InvalidTokenError:
-            logger.info(
-                "Failed to login using auth token falling back to refresh token"
-            )
     if tokensAuthRequest.refreshToken:
-        logger.info("Trying to login with refresh token")
-        try:
-            refreshToken = verify_jwt_token(
-                tokensAuthRequest.refreshToken, tokensAuthRequest.audience
-            )
-        except InvalidTokenError:
-            raise HTTPException(status_code=401, detail="Login failed invalid token")
-        logger.info("Token verified successfully")
-        logger.info(f'searching for {tokensAuthRequest}')
-        refresh_token_record = (
-            db.query(RefreshTokenDB)
-            .filter(RefreshTokenDB.token == tokensAuthRequest.refreshToken)
-            .first()
-        )
-        if not refresh_token_record:
-            logger.info(f'could not find {tokensAuthRequest.refreshToken}')
-            raise HTTPException(status_code=404, detail="Refresh token not found")
-        logger.info(
-            f"We got a record with the provided token version {refresh_token_record.version}"
-        )
-        refresh_token_id = refresh_token_record.id
-        new_version = refreshToken["version"] + 1
-        new_refresh_token = create_jwt_token(
-            user_id=refreshToken["user_id"],
-            audience=tokensAuthRequest.audience,
-            token_version=new_version,
-        )
-        db.query(RefreshTokenDB).filter(RefreshTokenDB.id == refresh_token_id).update(
-            {"token": new_refresh_token, "version": new_version}
-        )
-        db.commit()
-        user_record = db.query(User).filter(User.id == refreshToken["user_id"]).first()
-        auth_token = create_jwt_auth_token(
-            user_id=refreshToken["user_id"],
-            audience=tokensAuthRequest.audience,
-            role=user_record.role,
-            expires_delta=5,
-        )
-        logger.info("New authentication token issued.")
-        logger.info(f'sent off new refresh token {new_refresh_token}')
-        return {
-            "status": 200,
-            "authToken": auth_token,
-            "refreshToken": new_refresh_token,
-        }
+        refreshToken = tokensAuthRequest.refreshToken
+        authorize_with_refresh_token(refreshToken)
+    pass
+
+
+def authorize_with_refresh_token(refresh_token: str, db: Session):
+    logger.info("Searching Database for refresh token provided")
+    token_record = (
+        db.query(RefreshTokenDB).filter(RefreshTokenDB.token == refresh_token).first()
+    )
+    if not token_record:
+        logger.info("Refresh token not found in database")
+        raise HTTPException(status_code=401, detail="Refresh token not found")
+    logger.info("refresh token found in database.")
+    pass
