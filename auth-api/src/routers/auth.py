@@ -106,7 +106,7 @@ def authorize_with_refresh_token(refresh_token: str, db: Session):
     try:
         verify_jwt_token(refresh_token, audience="your_audience_here")
         logger.info("Refresh token is valid")
-    except InvalidTokenError:
-        logger.info("Invalid refresh token")
+    except InvalidTokenError as e:
+        logger.info(f"Invalid refresh token \n{e}")
         raise HTTPException(status_code=401, detail="Invalid refresh token")
     pass
