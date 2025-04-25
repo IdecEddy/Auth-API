@@ -88,7 +88,10 @@ async def verify_tokens(
         refreshToken = tokensAuthRequest.refreshToken
         tokenAudience = tokensAuthRequest.audience
         payload = authorize_with_refresh_token(refreshToken, tokenAudience, db)
-        return {"refreshToken": payload["newRefreshToken"]}
+        return {
+            "refreshToken": payload["newRefreshToken"],
+            "authToken": payload["newAuthToken"],
+        }
     pass
 
 
@@ -153,6 +156,16 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
     token_record.version = token_version + 1
     db.commit()
     logger.info("Updated existing refresh token in database")
-
-    return {"newRefreshToken": new_refresh_token}
+    # Retrieve the user record based on the user_id from the payload
+    user_record = db.query(User).filter(User.id == payload.get("user_id")).first()
+    if not user_record:
+        logger.info("User not found for the given user_id in the token payload")
+        raise HTTPException(status_code=404, detail="User not found")
+    logger.info(f"User record found: {user_record.email}")
+    # Create a new auth token for the user
+    auth_token = create_jwt_auth_token(
+        user_id=user_record.id, audience=tokenAudience, role=user_record.role
+    )
+    logger.info(f"Generated new auth token for user: {user_record.email}")
+    return {"newRefreshToken": new_refresh_token, "newAuthToken": auth_token}
     pass
