@@ -29,7 +29,7 @@ def log():
 
 @router.post("/login")
 async def login(user_login: UserLogin, db: Session = Depends(get_db)):
-    user_record = db.query(User).filter(User.email == user_login.email).first()
+    user_record = db.query(User).filter(User.email == user_login.email.lower()).first()
     if user_record:
         is_password_verified = verify_password(
             user_login.password, str(user_record.hashed_password)
