@@ -119,5 +119,6 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
             f"database version = {token_record.version}"
         )
         raise HTTPException(status_code=401, detail="Token version mismatch")
+    logger.info("token versions match between database and request")
     # Create a new refresh_token using the old one but increment the version by one.
     pass
