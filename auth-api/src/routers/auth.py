@@ -103,11 +103,21 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
     logger.info(
         f"refresh token found in database. token version = {token_record.version}"
     )
-    # verify the token using JTW verify to make sure its a valid token.
+    # verify the token using JWT verify to make sure it's a valid token.
     try:
-        verify_jwt_token(token=refresh_token, audience=tokenAudience)
+        payload = verify_jwt_token(token=refresh_token, audience=tokenAudience)
         logger.info("Refresh token is valid")
     except InvalidTokenError:
         logger.info("Invalid refresh token")
         raise HTTPException(status_code=401, detail="Invalid refresh token")
+    
+    # ensure that the version in the verified token and the token in the database match.
+    token_version = payload.get("version")
+    if token_version != token_record.version:
+        logger.info(
+            f"Token version mismatch: token version = {token_version}, "
+            f"database version = {token_record.version}"
+        )
+        raise HTTPException(status_code=401, detail="Token version mismatch")
+    # Create a new refresh_token using the old one but increment the version by one.
     pass
