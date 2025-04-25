@@ -84,6 +84,7 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 async def verify_tokens(
     tokensAuthRequest: TokenAuthRequest, db: Session = Depends(get_db)
 ):
+    logger.info(tokensAuthRequest.authToken)
     if tokensAuthRequest.authToken:
         authToken = tokensAuthRequest.authToken
         tokenAudience = tokensAuthRequest.audience
