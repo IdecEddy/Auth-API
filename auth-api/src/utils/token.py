@@ -111,5 +111,6 @@ def verify_jwt_token(token: str, audience: str) -> dict:
             token, PUBLIC_KEY, algorithms=["RS256"], audience=audience
         )
         return decoded_token
-    except InvalidTokenError:
-        raise InvalidTokenError()
+    except InvalidTokenError as e:
+        logger.error(f"Token verification failed: {str(e)}")
+        raise InvalidTokenError(str(e))
