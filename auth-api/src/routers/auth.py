@@ -91,6 +91,7 @@ async def verify_tokens(
 
 
 def authorize_with_refresh_token(refresh_token: str, db: Session):
+    # search database for token return 401 if we can't find it.
     logger.info("Searching Database for refresh token provided")
     token_record = (
         db.query(RefreshTokenDB).filter(RefreshTokenDB.token == refresh_token).first()
@@ -101,4 +102,11 @@ def authorize_with_refresh_token(refresh_token: str, db: Session):
     logger.info(
         f"refresh token found in database. token version = {token_record.version}"
     )
+    # verify the token using JTW verify to make sure its a valid token.
+    try:
+        verify_jwt_token(refresh_token, audience="your_audience_here")
+        logger.info("Refresh token is valid")
+    except InvalidTokenError:
+        logger.info("Invalid refresh token")
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
     pass
