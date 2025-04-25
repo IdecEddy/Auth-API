@@ -115,6 +115,7 @@ def authorize_with_auth_token(auth_token: str, tokenAudience: str):
         logger.info("Invalid auth token falling back to refresh token")
         return False
 
+
 def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Session):
     # search database for token return 401 if we can't find it.
     logger.info("Searching Database for refresh token provided")
@@ -123,7 +124,7 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
     )
     if not token_record:
         logger.info("Refresh token not found in database")
-        raise HTTPException(status_code=401, detail="Refresh token not found")
+        raise HTTPException(status_code=401, detail="Refresh token not found!")
     logger.info(
         f"refresh token found in database. token version = {token_record.version}"
     )
