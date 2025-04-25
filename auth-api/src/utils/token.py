@@ -60,7 +60,7 @@ def create_jwt_token(
 
 
 def create_jwt_auth_token(
-    user_id: int, audience: str, role: str, expires_delta: int = 60
+    user_id: int, audience: str, role: str, expires_delta: int = 1
 ) -> str:
     """
     Create a JWT token.
