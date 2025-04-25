@@ -84,15 +84,35 @@ def verify_auth_token(authTokenRequest: AuthTokenRequest):
 async def verify_tokens(
     tokensAuthRequest: TokenAuthRequest, db: Session = Depends(get_db)
 ):
+    if tokensAuthRequest.authToken:
+        authToken = tokensAuthRequest.authToken
+        tokenAudience = tokensAuthRequest.audience
+        authorize_with_auth_token(authToken, tokenAudience)
+        return {
+            "method": "refresh_token",
+            "status": 200,
+        }
+
     if tokensAuthRequest.refreshToken:
         refreshToken = tokensAuthRequest.refreshToken
         tokenAudience = tokensAuthRequest.audience
         payload = authorize_with_refresh_token(refreshToken, tokenAudience, db)
         return {
+            "method": "refresh_token",
+            "status": 200,
             "refreshToken": payload["newRefreshToken"],
             "authToken": payload["newAuthToken"],
         }
-    pass
+
+
+def authorize_with_auth_token(auth_token: str, tokenAudience: str):
+    # Verify the token is a valid token
+    try:
+        payload = verify_jwt_token(token=auth_token, audience=tokenAudience)
+        logger.info("Auth token is valid")
+    except InvalidTokenError:
+        logger.info("Invalid auth token")
+        raise HTTPException(status_code=401, detail="Invalid auth token")
 
 
 def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Session):
