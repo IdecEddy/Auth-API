@@ -12,6 +12,7 @@ from utils.db import get_db
 from utils.hashing import verify_password
 from utils.token import create_jwt_auth_token, create_jwt_token, verify_jwt_token
 import datetime
+
 router = APIRouter(prefix="/api/v1/auth")
 logger = setup_logging()
 
@@ -128,9 +129,13 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
     old_expiration_time = payload.get("exp")
     if not old_expiration_time:
         logger.info("Old token does not have an expiration time")
-        raise HTTPException(status_code=400, detail="Invalid token: missing expiration time")
+        raise HTTPException(
+            status_code=400, detail="Invalid token: missing expiration time"
+        )
     # Calculate the remaining time until the old token's expiration
-    remaining_time = old_expiration_time - int(datetime.datetime.utcnow().timestamp())
+    remaining_time = old_expiration_time - int(
+        datetime.datetime.now(datetime.timezone.utc).timestamp()
+    )
     if remaining_time <= 0:
         logger.info("Old token has already expired")
         raise HTTPException(status_code=401, detail="Old token has expired")
