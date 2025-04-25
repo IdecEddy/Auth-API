@@ -87,15 +87,11 @@ async def verify_tokens(
     if tokensAuthRequest.authToken:
         authToken = tokensAuthRequest.authToken
         tokenAudience = tokensAuthRequest.audience
-        try:
-            authorize_with_auth_token(authToken, tokenAudience)
+        if authorize_with_auth_token(authToken, tokenAudience):
             return {
                 "method": "auth_token",
                 "status": 200,
             }
-        except InvalidTokenError:
-            pass
-
     if tokensAuthRequest.refreshToken:
         refreshToken = tokensAuthRequest.refreshToken
         tokenAudience = tokensAuthRequest.audience
@@ -113,9 +109,10 @@ def authorize_with_auth_token(auth_token: str, tokenAudience: str):
     try:
         verify_jwt_token(token=auth_token, audience=tokenAudience)
         logger.info("Auth token is valid")
+        return True
     except InvalidTokenError:
         logger.info("Invalid auth token falling back to refresh token")
-
+        return False
 
 def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Session):
     # search database for token return 401 if we can't find it.
