@@ -102,6 +102,7 @@ async def verify_tokens(
             "refreshToken": payload["newRefreshToken"],
             "authToken": payload["newAuthToken"],
         }
+    logger.info("both auth and refresh authorization failed.")
 
 
 def authorize_with_auth_token(auth_token: str, tokenAudience: str):
