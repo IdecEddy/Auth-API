@@ -86,11 +86,12 @@ async def verify_tokens(
 ):
     if tokensAuthRequest.refreshToken:
         refreshToken = tokensAuthRequest.refreshToken
-        authorize_with_refresh_token(refreshToken, db)
+        tokenAudience = tokensAuthRequest.audience
+        authorize_with_refresh_token(refreshToken, tokenAudience, db)
     pass
 
 
-def authorize_with_refresh_token(refresh_token: str, db: Session):
+def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Session):
     # search database for token return 401 if we can't find it.
     logger.info("Searching Database for refresh token provided")
     token_record = (
@@ -104,9 +105,9 @@ def authorize_with_refresh_token(refresh_token: str, db: Session):
     )
     # verify the token using JTW verify to make sure its a valid token.
     try:
-        verify_jwt_token(refresh_token, audience="your_audience_here")
+        verify_jwt_token(token=refresh_token, audience=tokenAudience)
         logger.info("Refresh token is valid")
     except InvalidTokenError:
-        logger.info(f"Invalid refresh token")
+        logger.info("Invalid refresh token")
         raise HTTPException(status_code=401, detail="Invalid refresh token")
     pass
