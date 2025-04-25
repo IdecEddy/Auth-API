@@ -98,5 +98,7 @@ def authorize_with_refresh_token(refresh_token: str, db: Session):
     if not token_record:
         logger.info("Refresh token not found in database")
         raise HTTPException(status_code=401, detail="Refresh token not found")
-    logger.info("refresh token found in database.")
+    logger.info(
+        f"refresh token found in database. token version = {token_record.version}"
+    )
     pass
