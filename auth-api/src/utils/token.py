@@ -41,9 +41,12 @@ def create_jwt_token(
     Returns:
     str: Encoded JWT token.
     """
-    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
-        minutes=expires_delta
-    )
+    if isinstance(expires_delta, datetime.timedelta):
+        expire = datetime.datetime.now(datetime.timezone.utc) + expires_delta
+    else:
+        expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+            minutes=expires_delta
+        )
     iss = "auth-api"
     sub = "device-id"
     aud = audience
