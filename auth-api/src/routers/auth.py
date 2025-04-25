@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
-
 from loggingconf import setup_logging
 from models.auth_token_request import AuthTokenRequest
 from models.refresh_token_request import RefreshTokenRequest
@@ -12,7 +11,7 @@ from models.refresh_token_db import RefreshTokenDB
 from utils.db import get_db
 from utils.hashing import verify_password
 from utils.token import create_jwt_auth_token, create_jwt_token, verify_jwt_token
-
+import datetime
 router = APIRouter(prefix="/api/v1/auth")
 logger = setup_logging()
 
@@ -125,10 +124,23 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
         raise HTTPException(status_code=401, detail="Token version mismatch")
     logger.info("token versions match between database and request")
     # Create a new refresh_token using the old one but increment the version by one.
+    # Extract the expiration time from the old token
+    old_expiration_time = payload.get("exp")
+    if not old_expiration_time:
+        logger.info("Old token does not have an expiration time")
+        raise HTTPException(status_code=400, detail="Invalid token: missing expiration time")
+    # Calculate the remaining time until the old token's expiration
+    remaining_time = old_expiration_time - int(datetime.datetime.utcnow().timestamp())
+    if remaining_time <= 0:
+        logger.info("Old token has already expired")
+        raise HTTPException(status_code=401, detail="Old token has expired")
+    # Use the remaining time to set the expiration for the new token
+    expires_delta = datetime.timedelta(seconds=remaining_time)
     new_refresh_token = create_jwt_token(
         user_id=payload.get("user_id"),
         audience=tokenAudience,
         token_version=token_version + 1,
+        expires_delta=expires_delta,
     )
     logger.info(f"Generated new refresh token with version: {token_version + 1}")
     # Save the new refresh token to the database
