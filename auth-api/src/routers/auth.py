@@ -89,8 +89,8 @@ async def verify_tokens(
     if tokensAuthRequest.authToken:
         authToken = tokensAuthRequest.authToken
         tokenAudience = tokensAuthRequest.audience
-        authResponse = authorize_with_auth_token(authToken, tokenAudience):
-        if authResponse['status'] == True:
+        authResponse = authorize_with_auth_token(authToken, tokenAudience)
+        if authResponse["status"] is True:
             return {
                 "method": "auth_token",
                 "status": 200,
@@ -196,5 +196,10 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
         user_id=user_record.id, audience=tokenAudience, role=user_record.role
     )
     logger.info(f"Generated new auth token for user: {user_record.email}")
-    return {"newRefreshToken": new_refresh_token, "newAuthToken": auth_token, "userId": user_record.id, "role": user_record.role}
+    return {
+        "newRefreshToken": new_refresh_token,
+        "newAuthToken": auth_token,
+        "userId": user_record.id,
+        "role": user_record.role,
+    }
     pass
