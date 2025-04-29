@@ -106,8 +106,8 @@ async def verify_tokens(
             "status": 200,
             "refreshToken": payload["newRefreshToken"],
             "authToken": payload["newAuthToken"],
-            "role": authResponse["role"],
-            "userId": authResponse["userId"],
+            "role": payload["role"],
+            "userId": payload["userId"],
         }
     logger.info("both auth and refresh authorization failed.")
     raise HTTPException(status_code=401, detail="Login failed invalid token")
