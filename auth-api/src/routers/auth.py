@@ -39,7 +39,7 @@ async def login(user_login: UserLogin, db: Session = Depends(get_db)):
             refresh_token = create_jwt_token(
                 user_id=user_record.id,
                 audience=user_login.audience,
-                expires_delta=datetime.timedelta(days=30)
+                expires_delta=datetime.timedelta(days=30),
             )
             refresh_token_db = RefreshTokenDB(token=refresh_token, version=1)
             db.add(refresh_token_db)
@@ -89,10 +89,13 @@ async def verify_tokens(
     if tokensAuthRequest.authToken:
         authToken = tokensAuthRequest.authToken
         tokenAudience = tokensAuthRequest.audience
-        if authorize_with_auth_token(authToken, tokenAudience):
+        authResponse = authorize_with_auth_token(authToken, tokenAudience):
+        if authResponse['status'] == True:
             return {
                 "method": "auth_token",
                 "status": 200,
+                "role": authResponse["role"],
+                "userId": authResponse["userId"],
             }
     if tokensAuthRequest.refreshToken:
         refreshToken = tokensAuthRequest.refreshToken
@@ -103,6 +106,8 @@ async def verify_tokens(
             "status": 200,
             "refreshToken": payload["newRefreshToken"],
             "authToken": payload["newAuthToken"],
+            "role": authResponse["role"],
+            "userId": authResponse["userId"],
         }
     logger.info("both auth and refresh authorization failed.")
     raise HTTPException(status_code=401, detail="Login failed invalid token")
@@ -111,12 +116,12 @@ async def verify_tokens(
 def authorize_with_auth_token(auth_token: str, tokenAudience: str):
     # Verify the token is a valid token
     try:
-        verify_jwt_token(token=auth_token, audience=tokenAudience)
+        payload = verify_jwt_token(token=auth_token, audience=tokenAudience)
         logger.info("Auth token is valid")
-        return True
+        return {"role": payload["role"], "userId": payload["user_id"], "status": True}
     except InvalidTokenError:
         logger.info("Invalid auth token falling back to refresh token")
-        return False
+        return {"role": None, "userId": None, "status": False}
 
 
 def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Session):
@@ -191,5 +196,5 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
         user_id=user_record.id, audience=tokenAudience, role=user_record.role
     )
     logger.info(f"Generated new auth token for user: {user_record.email}")
-    return {"newRefreshToken": new_refresh_token, "newAuthToken": auth_token}
+    return {"newRefreshToken": new_refresh_token, "newAuthToken": auth_token, "userId": user_record.id, "role": user_record.role}
     pass
