@@ -202,4 +202,3 @@ def authorize_with_refresh_token(refresh_token: str, tokenAudience: str, db: Ses
         "userId": user_record.id,
         "role": user_record.role,
     }
-    pass
